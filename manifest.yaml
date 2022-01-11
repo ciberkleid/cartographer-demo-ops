@@ -1,41 +1,43 @@
-apiVersion: apps/v1
-kind: Deployment
+---
+apiVersion: kapp.k14s.io/v1alpha1
+kind: Config
+rebaseRules:
+  - path:
+      - metadata
+      - annotations
+      - serving.knative.dev/creator
+    type: copy
+    sources: [new, existing]
+    resourceMatchers: &matchers
+      - apiVersionKindMatcher:
+          apiVersion: serving.knative.dev/v1
+          kind: Service
+  - path:
+      - metadata
+      - annotations
+      - serving.knative.dev/lastModifier
+    type: copy
+    sources: [new, existing]
+    resourceMatchers: *matchers
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
 metadata:
-  name: hello-go-web2git
-  labels:
-    app.kubernetes.io/part-of: hello-go-web2git
+  name: $(workload.metadata.name)$
 spec:
   template:
     metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "1"
       labels:
-        app.kubernetes.io/part-of: hello-go-web2git
+        app.kubernetes.io/part-of: $(workload.metadata.name)$
     spec:
-      serviceAccountName: workload-service-account
+      serviceAccountName: service-account
       containers:
         - name: workload
-          image: us-east4-docker.pkg.dev/fe-ciberkleid/cartographer-demo/hello-go-web2git@sha256:86e3eadc487361b520de95c3e6894b011fa65736d0dfce106bdb4536fe7a3a61
-          env:
-          - name: NAME
-            value: Cartographer ninja
+          image: $(image)$
+          env: $(workload.spec.env)$
           ports:
-            - name: http-port
-              containerPort: 8080
-  selector:
-    matchLabels:
-      app.kubernetes.io/part-of: hello-go-web2git
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: hello-go-web2git
-  labels:
-    app.kubernetes.io/part-of: hello-go-web2git
-spec:
-  ports:
-    - name: http
-      port: 80
-      protocol: TCP
-      targetPort: 8080
-  selector:
-    app.kubernetes.io/part-of: hello-go-web2git
-  type: ClusterIP
+            - containerPort: $(params.containerPort)$
+          securityContext:
+            runAsUser: 1000
