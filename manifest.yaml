@@ -2,8 +2,10 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: hello-go-web2git
-  labels:carto.run/workload-name: hello-go-web2git
-  app.kubernetes.io/component: run
+  labels:
+    app.kubernetes.io/part-of: hello-go-web2git
+    carto.run/workload-name: hello-go-web2git
+    app.kubernetes.io/component: run
 spec:
   template:
     metadata:
@@ -19,4 +21,4 @@ spec:
           securityContext:
             runAsUser: 1000
       imagePullSecrets:
-        - name: service-account
+        - name: registry-credentials
