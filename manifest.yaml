@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-go-web2git
+  labels:
+    app.kubernetes.io/part-of: hello-go-web2git
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: hello-go-web2git
+    spec:
+      serviceAccountName: workload-service-account
+      containers:
+        - name: workload
+          image: us-east4-docker.pkg.dev/fe-ciberkleid/cartographer-demo/hello-go-web2git@sha256:86e3eadc487361b520de95c3e6894b011fa65736d0dfce106bdb4536fe7a3a61
+          env:
+          - name: NAME
+            value: Cartographer ninja
+          ports:
+            - name: http-port
+              containerPort: 8080
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: hello-go-web2git
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-go-web2git
+  labels:
+    app.kubernetes.io/part-of: hello-go-web2git
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/part-of: hello-go-web2git
+  type: ClusterIP
