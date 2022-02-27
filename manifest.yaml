@@ -1,10 +1,10 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: hello-go-web2git
+  name: dev
   labels:
-    app.kubernetes.io/part-of: hello-go-web2git
-    carto.run/workload-name: hello-go-web2git
+    app.kubernetes.io/part-of: hello-world
+    carto.run/workload-name: dev
     app.kubernetes.io/component: run
 spec:
   template:
@@ -14,11 +14,9 @@ spec:
     spec:
       containers:
         - name: workload
-          image: us-east4-docker.pkg.dev/fe-ciberkleid/cartographer-demo/hello-go-web2git@sha256:86e3eadc487361b520de95c3e6894b011fa65736d0dfce106bdb4536fe7a3a61
-          env: [{"name": "NAME", "value": "Cartographer GitOps Workflow"}]
-          ports:
-            - containerPort: 8080
+          image: gcr.io/fe-ciberkleid/carto-demo-3/dev@sha256:751eb23aca5565327af37e7db5b441cf70057819f0a3595ae0c5e9e0192f4a42
           securityContext:
             runAsUser: 1000
       imagePullSecrets:
         - name: registry-credentials
+
