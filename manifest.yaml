@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: workload
-          image: gcr.io/fe-ciberkleid/carto-demo/dev@sha256:b3ac23f8ccdba35d02dfb3c0171dc25ce591e298605b67462586cd4486980c82
+          image: gcr.io/fe-ciberkleid/carto-demo/dev@sha256:92eb05ea069144492cb1b64ba156051bfeeddccaf3e73d00d1031f601dbb5037
           securityContext:
             runAsUser: 1000
       imagePullSecrets:
